@@ -49,17 +49,21 @@ var saveSchedule = function() {
 
 var changeColor = function(timeEl) {
     $(timeEl).removeClass("past present future");
-    var startTime = moment("9AM", "hA");
-    var endTime = moment("5PM", "hA");
     var blockHourText = $(timeEl).find("p").text().trim();
     var blockHour = moment(blockHourText, "hA");
-    if (moment().isSame(blockHour)) {
+    if (moment().isSame(blockHour, 'hour')) {
         $(timeEl).find("textarea").addClass("present");
-    } else if (moment().isAfter(blockHour) && moment().isBefore(endTime) && moment().isAfter(startTime)) {
+    } else if (moment().isBefore(blockHour, 'hour')) {
         $(timeEl).find("textarea").addClass("future");
-    } else if (moment().isBefore(blockHour) && moment().isAfter(startTime) && moment().isBefore(endTime)) {
+    } else if (moment().isAfter(blockHour, 'hour')) {
         $(timeEl).find("textarea").addClass("past");
     }
+}
+
+var loadColors = function() {
+    $(".row").each(function(index, el) {
+        changeColor(el);
+    });
 }
 
 $('.saveBtn').click(function() {
@@ -70,11 +74,8 @@ $('.saveBtn').click(function() {
 })
 
 loadSchedule();
+loadColors();
 
-setInterval(function() {
-    $(".row").each(function(index, el) {
-        changeColor(el);
-    });
-}, 1000);
+setInterval(loadColors, (1000 * 60));
 
 
